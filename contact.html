@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>联系 - yanking的小窝</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* 修改背景视频为背景图片 */
+        #bgImage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.9;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 1s ease-in-out, opacity 0.5s ease-in-out;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 30, 0.7);
+            z-index: -1;
+        }
+        
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+        
+        .music-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            font-size: 20px;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+        
+        .music-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .back-btn-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+        
+        .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .page-container {
+            max-width: 1200px;
+            margin: 100px auto 50px;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeIn 1s ease;
+        }
+        
+        .page-header h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .divider {
+            height: 4px;
+            width: 80px;
+            background: linear-gradient(to right, #ff9a9e, #fad0c4);
+            margin: 20px auto;
+            border-radius: 2px;
+        }
+        
+        .page-header p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            color: #e0e0ff;
+        }
+        
+        .contact-container {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .contact-info, .contact-form {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(30, 30, 60, 0.6);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.8s ease;
+        }
+        
+        .contact-info h2, .contact-form h2 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: #ff9a9e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .contact-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        
+        .contact-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .contact-item i {
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .contact-item .fa-qq { color: #12b7f5; }
+        .contact-item .fa-weixin { color: #09bb07; }
+        .contact-item .fa-envelope { color: #ea4335; }
+        .contact-item .fa-github { color: #f5f5f5; }
+        
+        .contact-item div h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .contact-item div p {
+            color: #a0a0d0;
+            font-size: 0.95rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #d0d0ff;
+        }
+        
+        .form-group input, 
+        .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(20, 20, 40, 0.6);
+            color: white;
+            font-size: 1rem;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .form-group input:focus, 
+        .form-group textarea:focus {
+            outline: none;
+            border: 1px solid #ff9a9e;
+            box-shadow: 0 0 0 3px rgba(255, 154, 158, 0.3);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            color: #1a1a2e;
+            border: none;
+            padding: 14px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-top: 50px;
+        }
+        
+        .footer p {
+            animation: fadeIn 1.5s ease;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .contact-container {
+                flex-direction: column;
+            }
+            
+            .back-btn span {
+                display: none;
+            }
+            
+            .back-btn {
+                width: 50px;
+                height: 50px;
+                padding: 0;
+                justify-content: center;
+            }
+        }
+        
+        /* 动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 发送成功提示 */
+        .success-message {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid rgba(46, 204, 113, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+        
+        /* 表单验证错误 */
+        .error {
+            border: 1px solid #ff6b6b !important;
+        }
+        
+        .error-message {
+            color: #ff6b6b;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        /* 项目展示区 */
+        .projects-section {
+            margin-top: 40px;
+            padding: 30px;
+            background: rgba(30, 30, 60, 0.6);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .projects-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .projects-header h2 {
+            font-size: 1.8rem;
+            color: #ff9a9e;
+        }
+        
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        
+        .project-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-8px);
+        }
+        
+        .project-image {
+            height: 180px;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: rgba(0, 0, 0, 0.3);
+        }
+        
+        .project-content {
+            padding: 20px;
+        }
+        
+        .project-content h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #ffccd5;
+        }
+        
+        .project-content p {
+            color: #c0c0e0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        /* 联系说明 */
+        .contact-instruction {
+            background: rgba(255, 200, 200, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            border-left: 4px solid #ff9a9e;
+        }
+        
+        .contact-instruction h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: #ffccd5;
+        }
+        
+        .contact-instruction ul {
+            padding-left: 20px;
+        }
+        
+        .contact-instruction li {
+            margin-bottom: 10px;
+            color: #e0e0ff;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景图片容器 -->
+    <div id="bgImage"></div>
+    
+    <!-- 遮罩层 -->
+    <div class="overlay"></div>
+    
+    <!-- 背景音乐 -->
+    <audio id="bgMusic" loop>
+        <source src="/yanking1/audio/bgm.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- 音乐控制按钮 -->
+    <div class="music-control">
+        <button id="musicBtn" class="music-btn">
+            <i class="fas fa-music"></i>
+        </button>
+    </div>
+    
+    <!-- 返回主页按钮 -->
+    <div class="back-btn-container">
+        <button class="back-btn" onclick="location.href='index.html'">
+            <i class="fas fa-home"></i> 返回主页
+        </button>
+    </div>
+    
+    <!-- 联系内容 -->
+    <div class="page-container">
+        <div class="page-header">
+            <h1>联系我</h1>
+            <div class="divider"></div>
+            <p>如果你很无聊想找人聊天，欢迎联系我！</p>
+        </div>
+        
+        <div class="contact-container">
+            <div class="contact-info">
+                <h2><i class="fas fa-comments"></i> 联系方式</h2>
+                
+                <div class="contact-methods">
+                    <div class="contact-item">
+                        <i class="fab fa-qq"></i>
+                        <div>
+                            <h3>QQ</h3>
+                            <p>有（联系方式）的不用，没有的没必要</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fab fa-weixin"></i>
+                        <div>
+                            <h3>微信</h3>
+                            <p>有（联系方式）的不用，没有的没必要</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h3>邮箱</h3>
+                            <p>有（联系方式）的不用，没有的没必要</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fab fa-github"></i>
+                        <div>
+                            <h3>GitHub</h3>
+                            <p>有（联系方式）的不用，没有的没必要</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-instruction">
+                    <h3><i class="fas fa-info-circle"></i> 邮件发送说明</h3>
+                    <ul>
+                        <li><strong>您的邮箱</strong>：填写您自己的邮箱地址（用于我回复您）</li>
+                        <li><strong>收件邮箱</strong>：1807193648@qq.com（我的邮箱）</li>
+                        <li>邮件主题和内容将直接发送到我的邮箱</li>
+                        <li>请确保填写有效的邮箱地址</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="contact-form">
+                <h2><i class="fas fa-paper-plane"></i> 发送消息</h2>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">姓名</label>
+                        <input type="text" id="name" required>
+                        <div class="error-message" id="nameError">请输入您的姓名</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">您的邮箱（发件人）</label>
+                        <input type="email" id="email" required>
+                        <div class="error-message" id="emailError">请输入有效的邮箱地址</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject">主题</label>
+                        <input type="text" id="subject" required>
+                        <div class="error-message" id="subjectError">请输入邮件主题</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">消息内容</label>
+                        <textarea id="message" rows="6" required></textarea>
+                        <div class="error-message" id="messageError">请输入消息内容</div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">发送消息 <i class="fas fa-paper-plane"></i></button>
+                    
+                    <div class="success-message" id="successMessage">
+                        <i class="fas fa-check-circle"></i> 消息已成功发送！我会尽快回复您。
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 项目展示区 -->
+        <div class="projects-section">
+            <div class="projects-header">
+                <i class="fas fa-code"></i>
+                <h2>我的项目展示</h2>
+            </div>
+            
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-image">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="project-content">
+                        <h3>个人博客系统</h3>
+                        <p>使用React和Node.js开发的个人博客系统，支持Markdown编辑和实时预览。</p>
+                    </div>
+                </div>
+                
+                <div class="project-card">
+                    <div class="project-image">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="project-content">
+                        <h3>智能相册应用</h3>
+                        <p>基于AI图像识别的智能相册管理应用，自动分类和标签照片。</p>
+                    </div>
+                </div>
+                
+                <div class="project-card">
+                    <div class="project-image">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <div class="project-content">
+                        <h3>HTML5小游戏</h3>
+                        <p>使用Canvas开发的休闲小游戏，包含多个关卡和成就系统。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>&copy; yankingの小窝. Made with ❤️ and ☕</p>
+    </footer>
+    
+    <script>
+        // 背景图片数组
+        const bgImages = [
+            '/yanking1/videos/bg1.jpg',
+            '/yanking1/videos/bg2.jpg',
+            '/yanking1/videos/bg3.jpg'
+        ];
+
+        // 预加载所有背景图片
+        function preloadImages() {
+            bgImages.forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+        }
+
+        // 设置随机背景图片
+        function setRandomBackground() {
+            const randomIndex = Math.floor(Math.random() * bgImages.length);
+            const bgImage = document.getElementById('bgImage');
+            
+            // 添加淡入淡出效果
+            bgImage.style.opacity = '0';
+            
+            setTimeout(() => {
+                bgImage.style.backgroundImage = `url('${bgImages[randomIndex]}')`;
+                bgImage.style.opacity = '1';
+            }, 500);
+        }
+
+        // 页面加载时初始化背景
+        document.addEventListener('DOMContentLoaded', function() {
+            // 预加载图片
+            preloadImages();
+            
+            // 设置初始背景
+            setRandomBackground();
+            
+            // 每30秒更换一次背景
+            setInterval(setRandomBackground, 30000);
+        });
+
+        // 音乐控制
+        const musicBtn = document.getElementById('musicBtn');
+        const bgMusic = document.getElementById('bgMusic');
+        
+        musicBtn.addEventListener('click', () => {
+            if (bgMusic.paused) {
+                bgMusic.play().catch(e => console.log('播放失败:', e));
+                musicBtn.innerHTML = '<i class="fas fa-music"></i>';
+            } else {
+                bgMusic.pause();
+                musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            }
+        });
+        
+        // 表单验证和提交
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 重置错误状态
+            resetErrors();
+            
+            // 获取表单值
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const subject = document.getElementById('subject').value.trim();
+            const message = document.getElementById('message').value.trim();
+            
+            let isValid = true;
+            
+            // 验证姓名
+            if (!name) {
+                showError('name');
+                isValid = false;
+            }
+            
+            // 验证邮箱
+            if (!email || !isValidEmail(email)) {
+                showError('email');
+                isValid = false;
+            }
+            
+            // 验证主题
+            if (!subject) {
+                showError('subject');
+                isValid = false;
+            }
+            
+            // 验证消息
+            if (!message) {
+                showError('message');
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // 显示发送中状态
+                const submitBtn = document.querySelector('.submit-btn');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 发送中...';
+                submitBtn.disabled = true;
+                
+                // 模拟邮件发送
+                setTimeout(() => {
+                    // 显示成功消息
+                    document.getElementById('successMessage').style.display = 'block';
+                    
+                    // 重置表单
+                    document.getElementById('contactForm').reset();
+                    
+                    // 恢复按钮状态
+                    setTimeout(() => {
+                        submitBtn.innerHTML = '发送消息 <i class="fas fa-paper-plane"></i>';
+                        submitBtn.disabled = false;
+                    }, 2000);
+                }, 1500);
+            }
+        });
+        
+        // 邮箱验证函数
+        function isValidEmail(email) {
+            const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(String(email).toLowerCase());
+        }
+        
+        // 显示错误
+        function showError(field) {
+            document.getElementById(field).classList.add('error');
+            document.getElementById(field + 'Error').style.display = 'block';
+        }
+        
+        // 重置错误状态
+        function resetErrors() {
+            const fields = ['name', 'email', 'subject', 'message'];
+            fields.forEach(field => {
+                document.getElementById(field).classList.remove('error');
+                document.getElementById(field + 'Error').style.display = 'none';
+            });
+        }
+        
+        // 输入时移除错误状态
+        document.querySelectorAll('#contactForm input, #contactForm textarea').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('error');
+                document.getElementById(this.id + 'Error').style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

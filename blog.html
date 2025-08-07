@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>博客 - yanking的小窝</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* 背景图片样式 */
+        #bgImage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.9;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 1s ease-in-out, opacity 0.5s ease-in-out;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 30, 0.7);
+            z-index: -1;
+        }
+        
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+        
+        .music-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            font-size: 20px;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+        
+        .music-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .back-btn-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+        
+        .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .page-container {
+            max-width: 1200px;
+            margin: 100px auto 50px;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeIn 1s ease;
+        }
+        
+        .page-header h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .divider {
+            height: 4px;
+            width: 80px;
+            background: linear-gradient(to right, #ff9a9e, #fad0c4);
+            margin: 20px auto;
+            border-radius: 2px;
+        }
+        
+        .page-header p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            color: #e0e0ff;
+        }
+        
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .blog-card {
+            background: rgba(30, 30, 60, 0.6);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .blog-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        
+        .blog-image {
+            height: 220px;
+            overflow: hidden;
+        }
+        
+        .blog-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .blog-card:hover .blog-image img {
+            transform: scale(1.05);
+        }
+        
+        .blog-content {
+            padding: 25px;
+        }
+        
+        .blog-content h2 {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            color: #ffccd5;
+        }
+        
+        .blog-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            color: #a0a0d0;
+            font-size: 0.9rem;
+        }
+        
+        .blog-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .blog-content p {
+            color: #d0d0ff;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            min-height: 90px;
+        }
+        
+        .blog-read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            color: #1a1a2e;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+        
+        .blog-read-more:hover {
+            transform: translateX(5px);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-top: 50px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .back-btn span {
+                display: none;
+            }
+            
+            .back-btn {
+                width: 50px;
+                height: 50px;
+                padding: 0;
+                justify-content: center;
+            }
+        }
+        
+        /* 动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 标签样式 */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 30px 0;
+            justify-content: center;
+        }
+        
+        .tag {
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .tag:hover {
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            color: #1a1a2e;
+            transform: translateY(-3px);
+        }
+        
+        .tag.active {
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            color: #1a1a2e;
+            font-weight: 600;
+        }
+        
+        /* 文章详情页样式 */
+        .article-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(30, 30, 60, 0.6);
+            border-radius: 15px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        
+        .article-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .article-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #ffccd5;
+        }
+        
+        .article-meta {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            color: #a0a0d0;
+            margin-bottom: 20px;
+        }
+        
+        .article-image {
+            width: 100%;
+            height: 400px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .article-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .article-content {
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        
+        .article-content p {
+            margin-bottom: 20px;
+            color: #e0e0ff;
+        }
+        
+        .article-content h3 {
+            color: #ffccd5;
+            margin: 30px 0 15px;
+            border-left: 4px solid #ff9a9e;
+            padding-left: 15px;
+        }
+        
+        .back-to-blog {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            color: white;
+            text-decoration: none;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-to-blog:hover {
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            color: #1a1a2e;
+            transform: translateX(-5px);
+        }
+        
+        /* 歌单样式 */
+        .song-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .song-item {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .song-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+        }
+        
+        .song-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            font-size: 1.2rem;
+            color: #ff9a9e;
+        }
+        
+        .song-info h4 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .song-info p {
+            font-size: 0.9rem;
+            color: #a0a0d0;
+            margin: 0;
+        }
+        
+        .music-analysis {
+            background: rgba(255, 200, 200, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 40px 0;
+            border-left: 4px solid #ff9a9e;
+        }
+        
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: #ffccd5;
+        }
+        
+        .analysis-content p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .analysis-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .analysis-tag {
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        /* 个人简介样式 */
+        .personal-info {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+        
+        .avatar-container {
+            flex: 0 0 150px;
+        }
+        
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .info-content {
+            flex: 1;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .info-card {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .info-card h3 {
+            color: #ff9a9e;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* 喜欢的人部分样式 */
+        .likes-section {
+            margin: 40px 0;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border-left: 4px solid #ff9a9e;
+        }
+        
+        .likes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .like-card {
+            background: rgba(30, 30, 60, 0.6);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .like-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .like-image {
+            height: 250px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .like-image::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            background: linear-gradient(to top, rgba(26, 26, 46, 0.9), transparent);
+            z-index: 1;
+        }
+        
+        .like-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .like-card:hover .like-image img {
+            transform: scale(1.05);
+        }
+        
+        .like-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            z-index: 2;
+        }
+        
+        .like-info h4 {
+            font-size: 1.4rem;
+            color: #ffccd5;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .like-info p {
+            color: #e0e0ff;
+            font-size: 1rem;
+        }
+        
+        .like-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 154, 158, 0.8);
+            color: #1a1a2e;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 2;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .likes-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .like-image {
+                height: 220px;
+            }
+            
+            .personal-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .avatar-container {
+                flex: 0 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景图片容器 -->
+    <div id="bgImage"></div>
+    
+    <!-- 遮罩层 -->
+    <div class="overlay"></div>
+    
+    <!-- 背景音乐 -->
+    <audio id="bgMusic" loop>
+        <source src="/yanking1/audio/bgm.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- 音乐控制按钮 -->
+    <div class="music-control">
+        <button id="musicBtn" class="music-btn">
+            <i class="fas fa-music"></i>
+        </button>
+    </div>
+    
+    <!-- 返回主页按钮 -->
+    <div class="back-btn-container">
+        <button class="back-btn" onclick="location.href='index.html'">
+            <i class="fas fa-home"></i> 返回主页
+        </button>
+    </div>
+    
+    <!-- 博客内容 -->
+    <div class="page-container">
+        <div class="page-header">
+            <h1>我的博客</h1>
+            <div class="divider"></div>
+            <p>分享我的想法、创作和技术探索</p>
+        </div>
+        
+        <!-- 标签筛选 -->
+        <div class="tags-container">
+            <div class="tag active">全部</div>
+            <div class="tag">小说</div>
+            <div class="tag">游戏</div>
+            <div class="tag">音乐</div>
+            <div class="tag">杂物</div>
+        </div>
+        
+        <!-- 博客文章网格 -->
+        <div class="blog-grid">
+            <article class="blog-card" data-tags="小说">
+                <div class="blog-image">
+                    <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070&auto=format&fit=crop" alt="小说创作">
+                </div>
+                <div class="blog-content">
+                    <h2>我的小说创作计划</h2>
+                    <div class="blog-meta">
+                        <span><i class="fas fa-calendar"></i> 2025-08-02</span>
+                        <span><i class="fas fa-tag"></i> 小说</span>
+                    </div>
+                    <p>分享我的一些奇奇怪怪的小说计划，包括玄幻、奇幻和科幻题材。目前正在构思一部关于蛊修世界的长篇故事，灵感来源于蛊真人...</p>
+                    <a href="#novel-plan" class="blog-read-more">阅读更多 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </article>
+            
+            <article class="blog-card" data-tags="游戏">
+                <div class="blog-image">
+                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop" alt="游戏开发">
+                </div>
+                <div class="blog-content">
+                    <h2>我的游戏开发之旅</h2>
+                    <div class="blog-meta">
+                        <span><i class="fas fa-calendar"></i> 2025-07-25</span>
+                        <span><i class="fas fa-tag"></i> 游戏</span>
+                    </div>
+                    <p>记录我学习游戏开发的过程，从简单的2D游戏到现在的3D项目。分享遇到的挑战和解决方案，以及如何将小说元素融入游戏设计...</p>
+                    <a href="#game-dev" class="blog-read-more">阅读更多 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </article>
+            
+            <article class="blog-card" data-tags="音乐">
+                <div class="blog-image">
+                    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=2070&auto=format&fit=crop" alt="音乐歌单">
+                </div>
+                <div class="blog-content">
+                    <h2>我的精选歌单</h2>
+                    <div class="blog-meta">
+                        <span><i class="fas fa-calendar"></i> 2025-07-18</span>
+                        <span><i class="fas fa-tag"></i> 音乐</span>
+                    </div>
+                    <p>分享一些我喜欢听的歌，基本都是可以在各大平台搜到的。歌词有深度、有寓意是我选择音乐的首要标准...</p>
+                    <a href="#music-playlist" class="blog-read-more">阅读更多 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </article>
+            
+            <article class="blog-card" data-tags="杂物">
+                <div class="blog-image">
+                    <img src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?q=80&w=2070&auto=format&fit=crop" alt="个人简介">
+                </div>
+                <div class="blog-content">
+                    <h2>关于我的信息</h2>
+                    <div class="blog-meta">
+                        <span><i class="fas fa-calendar"></i> 2025-07-10</span>
+                        <span><i class="fas fa-tag"></i> 杂物</span>
+                    </div>
+                    <p>分享一些关于我的信息，包括兴趣爱好、创作理念和个人经历。一个热爱创作、音乐和技术的普通人...</p>
+                    <a href="#about-me" class="blog-read-more">阅读更多 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </article>
+        </div>
+        
+        <!-- 文章详情页（小说创作计划） -->
+        <div id="novel-plan" class="article-detail" style="display: none;">
+            <div class="article-container">
+                <div class="article-header">
+                    <h1 class="article-title">我的小说创作计划</h1>
+                    <div class="article-meta">
+                        <span><i class="fas fa-calendar"></i> 2025-08-02</span>
+                        <span><i class="fas fa-tag"></i> 小说</span>
+                        <span><i class="fas fa-clock"></i> 阅读时间: 8分钟</span>
+                    </div>
+                    <div class="divider"></div>
+                </div>
+                
+                <div class="article-image">
+                    <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070&auto=format&fit=crop" alt="小说创作">
+                </div>
+                
+                <div class="article-content">
+                    <p>欢迎来到我的创作世界！在这里，我将分享我的小说创作计划和一些奇思妙想。</p>
+                    
+                    <h3>天灵</h3>
+                    <p>我的主要创作计划是一个以修仙世界为背景的长篇故事，灵感来源于《蛊真人》。在这个世界中，蛊师们通过培养和控制各种奇特的蛊虫来获得力量。但我的故事算是同人作品。</p>
+                    
+                    <p>主角张砚之本是蓝星的一名学子，因众生天中的张砚之催动九世灵而被拉取来了这方世界。作为天外之魔，他得到了本体留下的最优秀的躯体...</p>
+                    
+                    <h3>双界</h3>
+                    <p>另一个正在构思的项目也是一个题材的。</p>
+                    
+                    <p>在这个世界中，张砚之本在蓝星，无端觉醒了一方世界，他可以自由进出两个世界，甚至可以操控时间的流逝，呵呵，这也算是蛊的同人作品...</p>
+                    
+                </div>
+                
+                <a href="#" class="back-to-blog"><i class="fas fa-arrow-left"></i> 返回博客列表</a>
+            </div>
+        </div>
+        
+        <!-- 文章详情页（游戏开发之旅） -->
+        <div id="game-dev" class="article-detail" style="display: none;">
+            <div class="article-container">
+                <div class="article-header">
+                    <h1 class="article-title">我的游戏开发之旅</h1>
+                    <div class="article-meta">
+                        <span><i class="fas fa-calendar"></i> 2025-07-25</span>
+                        <span><i class="fas fa-tag"></i> 游戏</span>
+                        <span><i class="fas fa-clock"></i> 阅读时间: 10分钟</span>
+                    </div>
+                    <div class="divider"></div>
+                </div>
+                
+                <div class="article-image">
+                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop" alt="游戏开发">
+                </div>
+                
+                <div class="article-content">
+                    <p>游戏开发一直是我的梦想，从最初的简单2D游戏到现在的3D项目，这是一段充满挑战和成长的旅程。在这篇文章中，我将分享我的游戏开发经历和心得。</p>
+                    
+                    <h3>起点：简单的2D游戏</h3>
+                    <p>其实，说实话，在真正意义上的游戏我目前还没开发出一个，一般要么是半途而废，要么是没时间</p>
+                    
+                    <p>但目前我计划从简单的2D的视觉小说做起，视觉小说还需要剧本，所以开发周期还是比较长的</p>
+                    
+                    <h3>聊聊我的看法</h3>
+                    <p>因为我总是想做的好，做的出色，甚至有可能是公开发布的，所以我一直在想，该如何显得更加出众</p>
+                    
+                    <p>但这也让我浪费了不少时间，其实这个网站也是我的一次尝试</p>
+                    
+                    <h3>当前项目：视觉小说开发</h3>
+                    <p>目前还只是初级的游戏，视觉小说的开发，但我想，我应该不会就是简单的选择啊过剧情什么的，如果技术允许，我希望可以加上一些图鉴，小游戏，人物简介之类的</p>
+                    
+                    <p>目前只是使用python，godot开发，一方面是因为比较好学，一方面是因为配置不允许啊，我这个配置甚至只能用godot的最低渲染方式</p>
+                    
+                    <h3>未来计划</h3>
+                    <p>我的目标是完成我的视觉小说的Demo版本，可能会在b站或抖音发布。当然也只是说一下而已，录一些实机演示</p>
+                    
+                    <p>如果你对游戏开发感兴趣，或者有任何建议，欢迎私信交流！等我开发完，你也可以找我要内测OVO</p>
+                </div>
+                
+                <a href="#" class="back-to-blog"><i class="fas fa-arrow-left"></i> 返回博客列表</a>
+            </div>
+        </div>
+        
+        <!-- 文章详情页（歌单） -->
+        <div id="music-playlist" class="article-detail" style="display: none;">
+            <div class="article-container">
+                <div class="article-header">
+                    <h1 class="article-title">我的精选歌单</h1>
+                    <div class="article-meta">
+                        <span><i class="fas fa-calendar"></i> 2025-07-18</span>
+                        <span><i class="fas fa-tag"></i> 音乐</span>
+                        <span><i class="fas fa-clock"></i> 阅读时间: 6分钟</span>
+                    </div>
+                    <div class="divider"></div>
+                </div>
+                
+                <div class="article-image">
+                    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=2070&auto=format&fit=crop" alt="音乐歌单">
+                </div>
+                
+                <div class="article-content">
+                    <p>分享一些我喜欢听的歌，这些歌曲大多来自不同风格和年代的歌手，但它们都有一个共同点：歌词有深度、有寓意。我认为好的音乐不仅仅是旋律动听，更重要的是能引发思考，触动心灵。</p>
+                    
+                    <div class="music-analysis">
+                        <div class="analysis-title">
+                            <i class="fas fa-chart-line"></i>
+                            <h3>我的音乐属性分析</h3>
+                        </div>
+                        <div class="analysis-content">
+                            <p>从这份歌单可以看出，我偏爱歌词有深度、富有诗意的歌曲。这些歌曲往往不只是表达简单的情绪，而是通过隐喻、象征等手法探讨人生、情感和社会问题。</p>
+                            <p>我特别喜欢古风歌曲，因为它们常常融合了中国传统文化元素，歌词如诗如画，意境深远。同时，我也欣赏那些能直击人心、表达真实情感的现代歌曲。</p>
+                            <p>总的来说，我的音乐品味倾向于：</p>
+                            <div class="analysis-tags">
+                                <span class="analysis-tag">富有诗意的歌词</span>
+                                <span class="analysis-tag">情感深度</span>
+                                <span class="analysis-tag">文化底蕴</span>
+                                <span class="analysis-tag">意境营造</span>
+                                <span class="analysis-tag">人生哲理</span>
+                                <span class="analysis-tag">情感共鸣</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3>我的精选歌单</h3>
+                    <p>以下是我精心挑选的歌曲，每一首都值得细细品味歌词的深意：</p>
+                    
+                    <div class="song-list">
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>年轮</h4>
+                                <p>张碧晨</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>年轮</h4>
+                                <p>汪苏泷</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>年轮dj</h4>
+                                <p>DJ版</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>在</h4>
+                                <p>草东</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>弱水三千</h4>
+                                <p>石头</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>九万字</h4>
+                                <p>黄诗扶</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>心如止水</h4>
+                                <p>Ice Paper</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>春泥</h4>
+                                <p>庾澄庆</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>关山酒</h4>
+                                <p>等什么君</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>精卫</h4>
+                                <p>30年前，50年后</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>紫荆花盛开</h4>
+                                <p>李荣浩</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>半壶纱</h4>
+                                <p>刘珂矣</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>春不晚</h4>
+                                <p>程响</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>牵丝戏</h4>
+                                <p>银临/Aki阿杰</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>难却</h4>
+                                <p>平生不晚</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>叹云兮</h4>
+                                <p>鞠婧祎</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>反乌托邦</h4>
+                                <p>周深</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>风催雨</h4>
+                                <p>音阙诗听</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>若梦</h4>
+                                <p>周深</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>Lighting Moment dj</h4>
+                                <p>DJ版</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>始见千秋</h4>
+                                <p>小曲儿</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>木兰行</h4>
+                                <p>等什么君</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>红昭愿</h4>
+                                <p>音阙诗听</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>天若有情</h4>
+                                <p>A-Lin</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>虞美人</h4>
+                                <p>李煜(词)</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>起风了</h4>
+                                <p>买辣椒也用券</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>长安姑娘</h4>
+                                <p>李常超</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>谪仙</h4>
+                                <p>伊格赛听/叶里</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>白月光</h4>
+                                <p>张信哲</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>白月光</h4>
+                                <p>王艺瑾</p>
+                            </div>
+                        </div>
+                        
+                        <div class="song-item">
+                            <div class="song-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <h4>诀别书</h4>
+                                <p>等什么君</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p>这些歌曲陪伴我度过了许多创作时光，每当我需要灵感或情绪调节时，它们总能给我力量。</p>
+                </div>
+                
+                <a href="#" class="back-to-blog"><i class="fas fa-arrow-left"></i> 返回博客列表</a>
+            </div>
+        </div>
+        
+        <!-- 文章详情页（关于我） -->
+        <div id="about-me" class="article-detail" style="display: none;">
+            <div class="article-container">
+                <div class="article-header">
+                    <h1 class="article-title">关于我的信息</h1>
+                    <div class="article-meta">
+                        <span><i class="fas fa-calendar"></i> 2025-07-10</span>
+                        <span><i class="fas fa-tag"></i> 杂物</span>
+                        <span><i class="fas fa-clock"></i> 阅读时间: 5分钟</span>
+                    </div>
+                    <div class="divider"></div>
+                </div>
+                
+                <div class="article-image">
+                    <img src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?q=80&w=2070&auto=format&fit=crop" alt="个人简介">
+                </div>
+                
+                <div class="article-content">
+                    <div class="personal-info">
+                        <div class="avatar-container">
+                            <div class="avatar">
+                                <!-- 修改为您的头像路径 -->
+                                <img src="/yanking1/images/avatar.jpg" alt="个人头像">
+                            </div>
+                        </div>
+                        <div class="info-content">
+                            <h3>yanking</h3>
+                            <p>一个热爱创作、音乐和技术的普通人。喜欢探索不同领域的知识，追求有深度的内容和有意义的表达。</p>
+                            <p>在我的世界里，文字、代码和音符是表达思想的最佳媒介。我相信好的作品应该能引发思考，触动心灵。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 添加喜欢的人部分 -->
+                    <div class="likes-section">
+                        <h3><i class="fas fa-heart"></i> 我喜欢的人</h3>
+                        <p>这些角色在我的创作中给了我很多灵感：</p>
+                        
+                        <div class="likes-grid">
+                            <div class="like-card">
+                                <div class="like-image">
+                                    <img src="/yanking1/images/like1.jpg" alt="花木兰">
+                                </div>
+                                <div class="like-badge">花木兰</div>
+                                <div class="like-info">
+                                    <h4>花木兰</h4>
+                                    <p>勇敢无畏的女战士，代父从军的传奇人物</p>
+                                </div>
+                            </div>
+                            
+                            <div class="like-card">
+                                <div class="like-image">
+                                    <img src="/yanking1/images/like2.jpg" alt="商心慈">
+                                </div>
+                                <div class="like-badge">商心慈</div>
+                                <div class="like-info">
+                                    <h4>商心慈</h4>
+                                    <p>蛊界为数不多的好人，纯情专一，爱慕对象并不是方源，而是黑土哥哥</p>
+                                </div>
+                            </div>
+                            
+                            <div class="like-card">
+                                <div class="like-image">
+                                    <img src="/yanking1/images/like3.jpg" alt="谢晗沫">
+                                </div>
+                                <div class="like-badge">谢晗沫</div>
+                                <div class="like-info">
+                                    <h4>谢晗沫</h4>
+                                    <p>三大善人之一，是方源第一世的爱慕对象，也是白月光</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3>我的兴趣爱好</h3>
+                    <p>我的兴趣爱好广泛且多样，主要包括：</p>
+                    
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <h3><i class="fas fa-book"></i> 小说创作</h3>
+                            <p>喜欢创作玄幻、奇幻题材的小说，特别是融入中国传统文化元素的故事。目前正在创作《天灵》和《双界》两个长篇系列。</p>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h3><i class="fas fa-gamepad"></i> 游戏开发</h3>
+                            <p>正在学习游戏开发，专注于视觉小说类游戏。希望通过游戏讲述有深度的故事，探索新的叙事方式。</p>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h3><i class="fas fa-music"></i> 音乐欣赏</h3>
+                            <p>特别欣赏歌词有深度、富有诗意的音乐作品。喜欢古风、中国风等融合传统文化元素的音乐风格。</p>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h3><i class="fas fa-laptop-code"></i> 网页开发</h3>
+                            <p>喜欢用代码构建美观实用的网站。这个个人网站就是我学习和实践web开发的一个项目。</p>
+                        </div>
+                    </div>
+                    
+                    <h3>创作理念</h3>
+                    <p>我追求有深度、有内涵的创作。无论是小说、游戏还是其他形式的作品，我都希望它们能：</p>
+                    <ul>
+                        <li>引发思考，而不仅仅是娱乐</li>
+                        <li>传递有意义的价值观和人生哲理</li>
+                        <li>融合传统文化与现代元素</li>
+                        <li>创造独特的审美体验</li>
+                        <li>触动观众/读者的情感共鸣</li>
+                    </ul>
+                    
+                    <h3>未来计划</h3>
+                    <p>短期计划是完成我的视觉小说Demo，并继续完善小说创作。长期来看，我希望能够：</p>
+                    <ul>
+                        <li>创作一部完整的长篇小说</li>
+                        <li>开发一个具有独特叙事方式的游戏</li>
+                        <li>建立一个分享创作经验和资源的平台</li>
+                        <li>探索AI技术与创意创作的结合</li>
+                    </ul>
+                    
+                    <p>感谢你花时间了解我！如果你对我的创作感兴趣，欢迎随时交流。</p>
+                </div>
+                
+                <a href="#" class="back-to-blog"><i class="fas fa-arrow-left"></i> 返回博客列表</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>&copy; yankingの小窝. Made with ❤️ and ☕</p>
+    </footer>
+    
+    <script>
+        // 背景图片数组
+        const bgImages = [
+            '/yanking1/videos/bg1.jpg',
+            '/yanking1/videos/bg2.jpg',
+            '/yanking1/videos/bg3.jpg'
+        ];
+
+        // 预加载所有背景图片
+        function preloadImages() {
+            bgImages.forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+        }
+
+        // 设置随机背景图片
+        function setRandomBackground() {
+            const randomIndex = Math.floor(Math.random() * bgImages.length);
+            const bgImage = document.getElementById('bgImage');
+            
+            // 添加淡入淡出效果
+            bgImage.style.opacity = '0';
+            
+            setTimeout(() => {
+                bgImage.style.backgroundImage = `url('${bgImages[randomIndex]}')`;
+                bgImage.style.opacity = '1';
+            }, 500);
+        }
+
+        // 页面加载时初始化背景
+        document.addEventListener('DOMContentLoaded', function() {
+            // 预加载图片
+            preloadImages();
+            
+            // 设置初始背景
+            setRandomBackground();
+            
+            // 每30秒更换一次背景
+            setInterval(setRandomBackground, 30000);
+        });
+
+        // 音乐控制
+        const musicBtn = document.getElementById('musicBtn');
+        const bgMusic = document.getElementById('bgMusic');
+        
+        musicBtn.addEventListener('click', () => {
+            if (bgMusic.paused) {
+                bgMusic.play().catch(e => console.log('播放失败:', e));
+                musicBtn.innerHTML = '<i class="fas fa-music"></i>';
+            } else {
+                bgMusic.pause();
+                musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            }
+        });
+        
+        // 文章导航功能
+        document.querySelectorAll('.blog-read-more').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                
+                // 隐藏所有文章详情
+                document.querySelectorAll('.article-detail').forEach(detail => {
+                    detail.style.display = 'none';
+                });
+                
+                // 隐藏博客网格
+                document.querySelector('.blog-grid').style.display = 'none';
+                document.querySelector('.tags-container').style.display = 'none';
+                
+                // 显示目标文章
+                document.getElementById(targetId).style.display = 'block';
+                
+                // 滚动到文章顶部
+                document.getElementById(targetId).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+        
+        // 返回博客列表功能
+        document.querySelectorAll('.back-to-blog').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // 隐藏所有文章详情
+                document.querySelectorAll('.article-detail').forEach(detail => {
+                    detail.style.display = 'none';
+                });
+                
+                // 显示博客网格和标签
+                document.querySelector('.blog-grid').style.display = 'grid';
+                document.querySelector('.tags-container').style.display = 'flex';
+                
+                // 滚动到顶部
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        
+        // 标签筛选功能
+        document.querySelectorAll('.tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                // 更新活动标签
+                document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const tagText = this.textContent.trim();
+                
+                // 显示/隐藏文章卡片
+                document.querySelectorAll('.blog-card').forEach(card => {
+                    if (tagText === '全部') {
+                        card.style.display = 'block';
+                    } else {
+                        const tags = card.getAttribute('data-tags');
+                        if (tags.includes(tagText)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

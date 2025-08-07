@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我 - yanking的小窝</title>
+    <link rel="stylesheet" href="/yanking1/css/style.css">
+    <link rel="icon" href="/yanking1/images/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- 背景视频（透明度提高到0.85） -->
+    <video id="bgVideo" class="background-video" autoplay muted loop>
+        <source id="videoSource" type="video/mp4">
+    </video>
+    
+    <!-- 遮罩层 -->
+    <div class="overlay"></div>
+    
+    <!-- 背景音乐 -->
+    <audio id="bgMusic" loop>
+        <source src="/yanking1/audio/bgm.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- 音乐控制按钮 -->
+    <div class="music-control">
+        <button id="musicBtn" class="music-btn">
+            <i class="fas fa-music"></i>
+        </button>
+    </div>
+    
+    <!-- 返回主页按钮 -->
+    <div class="back-btn-container">
+        <button class="back-btn" onclick="location.href='index.html'">
+            <i class="fas fa-home"></i> 返回主页
+        </button>
+    </div>
+    
+    <!-- 关于我内容 -->
+    <div class="page-container">
+        <div class="page-header">
+            <h1>关于我</h1>
+            <div class="divider"></div>
+        </div>
+        
+        <div class="about-content">
+            <div class="about-left">
+                <div class="about-avatar">
+                    <img src="/yanking1/images/avatar.jpg" alt="头像">
+                    <div class="avatar-ring"></div>
+                </div>
+                <div class="about-tags">
+                    <span class="tag">蛊真人爱好者</span>
+                    <span class="tag">电脑发烧友</span>
+                    <span class="tag">游戏玩家</span>
+                    <span class="tag">编程学习者</span>
+                </div>
+            </div>
+            
+            <div class="about-right">
+                <div class="about-intro">
+                    <h2><i class="fas fa-user-circle"></i> 我是谁</h2>
+                    <p>我是yanking，一个沉迷蛊真人的魔怔入。喜欢看小说、玩游戏，也热爱编程和电脑技术。希望能通过代码创造出我想做的事，比如游戏，视觉小说等。</p>
+                    <p>目前正在学习前端开发和游戏设计，梦想是开发一款属于自己的玄幻题材游戏。对新技术充满好奇，特别是AI和Web3领域。</p>
+                </div>
+                
+                <div class="about-passion">
+                    <h2><i class="fas fa-heart"></i> 我的兴趣</h2>
+                    <div class="passion-grid">
+                        <div class="passion-item">
+                            <i class="fas fa-book"></i>
+                            <h3>小说创作</h3>
+                            <p>喜欢创作各种题材的小说，尤其是玄幻和奇幻类</p>
+                        </div>
+                        <div class="passion-item">
+                            <i class="fas fa-laptop-code"></i>
+                            <h3>编程开发</h3>
+                            <p>学习前端开发、游戏开发和各种有趣的技术</p>
+                        </div>
+                        <div class="passion-item">
+                            <i class="fas fa-gamepad"></i>
+                            <h3>游戏体验</h3>
+                            <p>探索各种类型的游戏，尤其是RPG和策略游戏</p>
+                        </div>
+                        <div class="passion-item">
+                            <i class="fas fa-music"></i>
+                            <h3>二次元音乐</h3>
+                            <p>收集和欣赏各种二次元风格的音乐和歌曲</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="about-skills">
+                    <h2><i class="fas fa-star"></i> 我的技能</h2>
+                    <div class="skill-bars">
+                        <div class="skill-item">
+                            <div class="skill-label">HTML/CSS</div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-label">JavaScript</div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-label">游戏开发</div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 70%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-label">小说创作</div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 90%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>&copy; yankingの小窝. Made with ❤️ and ☕</p>
+    </footer>
+    
+    <script src="/yanking1/js/script.js"></script>
+</body>
+</html>
